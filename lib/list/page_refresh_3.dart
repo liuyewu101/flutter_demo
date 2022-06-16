@@ -4,13 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/list/refresh_sliver.dart';
 
+import '../data/custom_data_http.dart';
 import '../pages/home_page.dart';
 
 class pageRefresh3 extends State<HomePage>{
 
     String currentText = "自定义上下拉刷新样式";
     final int pageSize = 10;
-    List<ListItem> items = [];
+    int page = 0;
+    List<ItemBean> items = [];
     bool disposed = false;
 
     final ScrollController scrollController = ScrollController();
@@ -23,12 +25,10 @@ class pageRefresh3 extends State<HomePage>{
     }
 
     Future<void> onRefresh() async {
-        await Future.delayed(const Duration(seconds: 1));
         items.clear();
-        for (int i = 0; i < pageSize; i++) {
-            ListItem item = ListItem( name: 'refesh+ $i', subName: 'subName+ $i');
-            items.add(item);
-        }
+        Data data = await fetchData(page = 0,pageSize);
+        // Data data = await fetchPostData(page = 0,pageSize);
+        items.addAll(data.result.list);
         if(disposed) {
             return;
         }
@@ -36,11 +36,9 @@ class pageRefresh3 extends State<HomePage>{
     }
 
     Future<void> loadMore() async {
-        await Future.delayed(const Duration(seconds: 1));
-        for (int i = 0; i < pageSize; i++) {
-            ListItem item = ListItem( name: 'loadMore+ $i', subName: 'loadMore+ $i');
-            items.add(item);
-        }
+        page ++;
+        Data data = await fetchData(page,pageSize);
+        items.addAll(data.result.list);
         if(disposed) {
             return;
         }
@@ -114,9 +112,13 @@ class pageRefresh3 extends State<HomePage>{
                                             }
                                             return Card(
                                                 child: Container(
-                                                    height: 60,
                                                     alignment: Alignment.centerLeft,
-                                                    child: Text("Item ${items[index]} $index"),
+                                                    margin: const EdgeInsets.all(10),
+                                                    child:Column(
+                                                        children: <Widget>[
+                                                        Text(items[index].title),
+                                                        Image.network(items[index].coverUrl),
+                                                    ])
                                                 ),
                                             );
                                         },
@@ -165,14 +167,5 @@ Widget buildSimpleRefreshIndicator(
     );
 }
 
-class ListItem  {
-    const ListItem({
-        required this.name,
-        required this.subName,
-    });
-
-    final String name;
-    final String subName;
-}
 
 

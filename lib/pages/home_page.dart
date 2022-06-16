@@ -8,7 +8,7 @@ import '../list/page_refresh_3.dart';
 class HomePage extends StatefulWidget {
   @override
   // pageRefresh1 createState() => pageRefresh1();
-  // pageRefresh2 createState() => pageRefresh2();
-  pageRefresh3 createState() => pageRefresh3();
+  pageRefresh2 createState() => pageRefresh2();
+  // pageRefresh3 createState() => pageRefresh3();
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../data/custom_data_httpclient.dart';
 import '../pages/home_page.dart';
 
 // ignore: camel_case_types
@@ -6,8 +7,9 @@ class pageRefresh1 extends State<HomePage>{
 
     String currentText = "普通上下拉刷新1";
     final int pageSize = 10;
-    List<ListItem> items = [];
+    List<ItemBean> items = [];
     bool disposed = false;
+    int page = 0;
 
     final ScrollController scrollController = ScrollController();
     final GlobalKey<RefreshIndicatorState> refreshKey = GlobalKey();
@@ -21,10 +23,9 @@ class pageRefresh1 extends State<HomePage>{
     Future<void> onRefresh() async {
         await Future.delayed(const Duration(seconds: 1));
         items.clear();
-        for (int i = 0; i < pageSize; i++) {
-            ListItem item = ListItem( name: 'refesh+ $i', subName: 'subName+ $i');
-            items.add(item);
-        }
+
+        Data data = await httpClientData(page = 0, pageSize);
+        items.addAll(data.result.list);
         if(disposed) {
             return;
         }
@@ -33,10 +34,9 @@ class pageRefresh1 extends State<HomePage>{
 
     Future<void> loadMore() async {
         await Future.delayed(const Duration(seconds: 1));
-        for (int i = 0; i < pageSize; i++) {
-            ListItem item = ListItem( name: 'loadMore+ $i', subName: 'loadMore+ $i');
-            items.add(item);
-        }
+        page++;
+        Data data = await httpClientData(page, pageSize);
+        items.addAll(data.result.list);
         if(disposed) {
             return;
         }
